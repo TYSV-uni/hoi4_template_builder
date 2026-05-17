@@ -1,7 +1,7 @@
 require('dotenv').config();
-const express  = require('express');
-const bcrypt   = require('bcrypt');
-const path     = require('path');
+const express      = require('express');
+const bcrypt       = require('bcrypt');
+const path         = require('path');
 const cookieParser = require('cookie-parser');
 const { pool, initDB } = require('./db');
 
@@ -20,40 +20,40 @@ app.get('/weather.html', (req, res) => {
 
     const WeatherPage = () => {
         return React.createElement('html', { lang: 'en' },
-            React.createElement('head', null,
-                React.createElement('meta', { charSet: 'UTF-8' }),
-                React.createElement('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }),
-                React.createElement('title', null, 'Weather Intel — Tech Tree'),
-                React.createElement('link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }),
-                React.createElement('link', { href: 'https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&display=swap', rel: 'stylesheet' }),
-                React.createElement('link', { rel: 'stylesheet', href: 'css/weather.css' }),
-                React.createElement('link', {rel: "icon", href: "/media/favicon.ico"}),
-                React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react@18/umd/react.development.js' }),
-                React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react-dom@18/umd/react-dom.development.js' }),
-                React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react-router-dom@5/umd/react-router-dom.min.js' }),
-                React.createElement('script', { src: 'https://unpkg.com/@babel/standalone/babel.min.js' })
-            ),
-            React.createElement('body', null,
-                React.createElement('div', { id: 'top-bar' },
-                    React.createElement('a', { href: 'index.html' }, '← Tech Tree'),
-                    React.createElement('span', null, '/ Weather Intel')
-                ),
-                React.createElement('div', { id: 'app-root' },
-                    React.createElement('div', { className: 'paper' },
-                        React.createElement('div', { className: 'stamp' }, 'Intel Report'),
-                        React.createElement('div', { className: 'report-header' },
-                            React.createElement('h1', null, '⛅ Weather Intelligence'),
-                            React.createElement('div', { className: 'subtitle' }, `Meteorological Analysis Division · ${now}`),
-                            username ? React.createElement('div', { className: 'subtitle', style: { color: '#6b7a38', fontWeight: 'bold' } }, `Authorized Operative: ${username}`) : null
-                        ),
-                        React.createElement('div', { id: 'weather-client-root' }),
-                        React.createElement('div', { className: 'report-footer' },
-                            'Data: Open-Meteo (open-meteo.com) · Geocoding: OpenStreetMap Nominatim · No API key required'
-                        )
-                    )
-                ),
-                React.createElement('script', { type: 'text/babel', src: 'js/weather.js' })
-            )
+                                   React.createElement('head', null,
+                                                       React.createElement('meta', { charSet: 'UTF-8' }),
+                                                       React.createElement('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }),
+                                                       React.createElement('title', null, 'Weather Intel — Tech Tree'),
+                                                       React.createElement('link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }),
+                                                       React.createElement('link', { href: 'https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&display=swap', rel: 'stylesheet' }),
+                                                       React.createElement('link', { rel: 'stylesheet', href: 'css/weather.css' }),
+                                                       React.createElement('link', { rel: 'icon', href: '/media/favicon.ico' }),
+                                                       React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react@18/umd/react.development.js' }),
+                                                       React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react-dom@18/umd/react-dom.development.js' }),
+                                                       React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react-router-dom@5/umd/react-router-dom.min.js' }),
+                                                       React.createElement('script', { src: 'https://unpkg.com/@babel/standalone/babel.min.js' })
+                                   ),
+                                   React.createElement('body', null,
+                                                       React.createElement('div', { id: 'top-bar' },
+                                                                           React.createElement('a', { href: 'index.html' }, '← Tech Tree'),
+                                                                           React.createElement('span', null, '/ Weather Intel')
+                                                       ),
+                                                       React.createElement('div', { id: 'app-root' },
+                                                                           React.createElement('div', { className: 'paper' },
+                                                                                               React.createElement('div', { className: 'stamp' }, 'Intel Report'),
+                                                                                               React.createElement('div', { className: 'report-header' },
+                                                                                                                   React.createElement('h1', null, '⛅ Weather Intelligence'),
+                                                                                                                   React.createElement('div', { className: 'subtitle' }, `Meteorological Analysis Division · ${now}`),
+                                                                                                                   username ? React.createElement('div', { className: 'subtitle', style: { color: '#6b7a38', fontWeight: 'bold' } }, `Authorized Operative: ${username}`) : null
+                                                                                               ),
+                                                                                               React.createElement('div', { id: 'weather-client-root' }),
+                                                                                               React.createElement('div', { className: 'report-footer' },
+                                                                                                                   'Data: Open-Meteo (open-meteo.com) · Geocoding: OpenStreetMap Nominatim · No API key required'
+                                                                                               )
+                                                                           )
+                                                       ),
+                                                       React.createElement('script', { type: 'text/babel', src: 'js/weather.js' })
+                                   )
         );
     };
 
@@ -61,20 +61,22 @@ app.get('/weather.html', (req, res) => {
     res.send(html);
 });
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'), {
+    maxAge: '1d',
+    etag: true,
+    lastModified: true,
+}));
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
-
 
 async function requireAdmin(req, res, next) {
     const username = req.cookies.username;
     if (!username) return res.json({ ok: false, error: 'Authentication required' });
 
     try {
-        const result = await pool.query(
-            'SELECT role FROM users WHERE username = $1', [username]
-        );
+        const result = await pool.query('SELECT role FROM users WHERE username = $1', [username]);
         if (result.rows.length === 0 || result.rows[0].role !== 'admin')
             return res.json({ ok: false, error: 'Admin access required' });
         req.adminUsername = username;
@@ -93,17 +95,12 @@ app.post('/api/users', async (req, res) => {
         return res.json({ ok: false, error: 'Password: minimum 6 characters' });
 
     try {
-        const existing = await pool.query(
-            'SELECT 1 FROM users WHERE username = $1', [username]
-        );
+        const existing = await pool.query('SELECT 1 FROM users WHERE username = $1', [username]);
         if (existing.rows.length > 0)
             return res.json({ ok: false, error: 'This username is already taken' });
 
         const password_hash = await bcrypt.hash(password, 10);
-        await pool.query(
-            'INSERT INTO users (username, password_hash) VALUES ($1, $2)',
-            [username, password_hash]
-        );
+        await pool.query('INSERT INTO users (username, password_hash) VALUES ($1, $2)', [username, password_hash]);
         res.json({ ok: true });
     } catch (err) {
         console.error('Register error:', err);
@@ -118,9 +115,7 @@ app.post('/api/users/login', async (req, res) => {
         return res.json({ ok: false, error: 'Please fill in all fields' });
 
     try {
-        const result = await pool.query(
-            'SELECT password_hash, role FROM users WHERE username = $1', [username]
-        );
+        const result = await pool.query('SELECT password_hash, role FROM users WHERE username = $1', [username]);
         if (result.rows.length === 0)
             return res.json({ ok: false, error: 'Invalid username or password' });
 
@@ -142,7 +137,6 @@ app.put('/api/users/:username/password', async (req, res) => {
 
     if (req.cookies.username !== username)
         return res.json({ ok: false, error: 'Unauthorized' });
-
     if (!newPassword)
         return res.json({ ok: false, error: 'Missing fields' });
     if (newPassword.length < 6)
@@ -150,10 +144,7 @@ app.put('/api/users/:username/password', async (req, res) => {
 
     try {
         const newHash = await bcrypt.hash(newPassword, 10);
-        await pool.query(
-            'UPDATE users SET password_hash = $1 WHERE username = $2',
-            [newHash, username]
-        );
+        await pool.query('UPDATE users SET password_hash = $1 WHERE username = $2', [newHash, username]);
         res.json({ ok: true });
     } catch (err) {
         console.error('Password change error:', err);
@@ -171,9 +162,7 @@ app.delete('/api/users/:username', async (req, res) => {
         return res.json({ ok: false, error: 'Password required' });
 
     try {
-        const result = await pool.query(
-            'SELECT password_hash FROM users WHERE username = $1', [username]
-        );
+        const result = await pool.query('SELECT password_hash FROM users WHERE username = $1', [username]);
         if (result.rows.length === 0)
             return res.json({ ok: false, error: 'User not found' });
 
@@ -181,7 +170,6 @@ app.delete('/api/users/:username', async (req, res) => {
         if (!match)
             return res.json({ ok: false, error: 'Incorrect password' });
 
-        
         await pool.query('DELETE FROM users WHERE username = $1', [username]);
         res.clearCookie('username');
         res.json({ ok: true });
@@ -238,7 +226,7 @@ app.post('/api/users/:username/sessions', async (req, res) => {
 
         await pool.query(
             'INSERT INTO sessions (username, name, session_data, updated_at) VALUES ($1, $2, $3, NOW())',
-            [username, name, session]
+                         [username, name, session]
         );
         res.json({ ok: true });
     } catch (err) {
@@ -257,7 +245,7 @@ app.put('/api/users/:username/sessions/:name', async (req, res) => {
     try {
         await pool.query(
             'UPDATE sessions SET session_data = $1, updated_at = NOW() WHERE username = $2 AND name = $3',
-            [session, username, name]
+                         [session, username, name]
         );
         res.json({ ok: true });
     } catch (err) {
@@ -269,10 +257,7 @@ app.put('/api/users/:username/sessions/:name', async (req, res) => {
 app.delete('/api/users/:username/sessions/:name', async (req, res) => {
     const { username, name } = req.params;
     try {
-        await pool.query(
-            'DELETE FROM sessions WHERE username = $1 AND name = $2',
-            [username, name]
-        );
+        await pool.query('DELETE FROM sessions WHERE username = $1 AND name = $2', [username, name]);
         res.json({ ok: true });
     } catch (err) {
         console.error('Session delete error:', err);
@@ -328,11 +313,11 @@ app.get('/api/sessions/ref/:share_id', async (req, res) => {
 app.get('/api/admin/users', requireAdmin, async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT u.username, u.role, COUNT(s.id)::int AS session_count
-            FROM users u
-            LEFT JOIN sessions s ON s.username = u.username
-            GROUP BY u.username, u.role
-            ORDER BY u.username ASC
+        SELECT u.username, u.role, COUNT(s.id)::int AS session_count
+        FROM users u
+        LEFT JOIN sessions s ON s.username = u.username
+        GROUP BY u.username, u.role
+        ORDER BY u.username ASC
         `);
         res.json({ ok: true, users: result.rows });
     } catch (err) {
@@ -376,9 +361,7 @@ app.delete('/api/admin/users/:username', requireAdmin, async (req, res) => {
         return res.json({ ok: false, error: 'Cannot delete your own admin account' });
 
     try {
-        const result = await pool.query(
-            'DELETE FROM users WHERE username = $1 RETURNING username', [username]
-        );
+        const result = await pool.query('DELETE FROM users WHERE username = $1 RETURNING username', [username]);
         if (result.rowCount === 0)
             return res.json({ ok: false, error: 'User not found' });
         res.json({ ok: true });
@@ -389,9 +372,7 @@ app.delete('/api/admin/users/:username', requireAdmin, async (req, res) => {
 });
 
 initDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
 }).catch(err => {
     console.error('Failed to initialize database:', err);
     process.exit(1);
