@@ -62,6 +62,10 @@ app.get('/weather.html', (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, '../public')));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 
 async function requireAdmin(req, res, next) {
     const username = req.cookies.username;
