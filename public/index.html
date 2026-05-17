@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tech Tree</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="ui-menu">
+        <ul id="menu-tabs">
+            <li><button class="tab-btn" data-tab="inf">Infantry</button></li>
+            <li><button class="tab-btn" data-tab="sup">Support</button></li>
+            <li><button class="tab-btn" data-tab="tank">Armor</button></li>
+            <li><button class="tab-btn" data-tab="art">Artillery</button></li>
+            <li><button class="tab-btn" data-tab="elec">Electronics</button></li>
+            <li><button id="open-clear-research-btn" class="hoi4-btn tab-clear-btn" title="Clear research">✕</button></li>
+        </ul>
+
+        <div id="session-name-wrapper">
+            <span id="session-name-display">Session</span>
+            <span id="session-dirty-star">*</span>
+        </div>
+
+        <div id="menu-right">
+            <button id="live-refresh-btn" class="hoi4-btn tab-clear-btn hidden" title="Update the live import">↻</button>
+            <button id="manage-sessions-btn" class="hoi4-btn">Manage Sessions</button>
+
+            
+            <button id="auth-open-btn" class="hoi4-btn">Login / Register</button>
+
+            
+            <div id="user-menu-wrapper" class="hidden">
+                <button id="user-menu-btn"
+                        class="hoi4-btn user-menu-trigger"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    <span id="user-menu-username"></span>
+                    <span class="dd-arrow" aria-hidden="true">▾</span>
+                </button>
+
+                <nav id="user-dropdown" class="user-dropdown" role="menu" aria-label="User account menu" hidden>
+                    <ol>
+                        <li>
+                            <button class="dropdown-item dropdown-item--muted"
+                                    id="dd-reset-pw"
+                                    role="menuitem">Reset Password</button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item dropdown-item--muted"
+                                    id="dd-delete-acct"
+                                    role="menuitem"
+                                    data-action="delete">Delete Account</button>
+                        </li>
+                        <li role="separator">
+                            <div class="dropdown-divider" aria-hidden="true"></div>
+                        </li>
+                        <li>
+                            <button class="dropdown-item dropdown-item--danger"
+                                    id="dd-logout"
+                                    role="menuitem">Logout</button>
+                        </li>
+                        <li>
+                            
+                            <button class="dropdown-item dropdown-item--admin hidden"
+                                    id="dd-manage-users"
+                                    role="menuitem">Manage Users</button>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="tb-overlay">
+        <div id="designer-layout-wrapper">
+            <div id="hoi4-template-sidebar">
+                <div class="sidebar-header">Templates</div>
+                <div id="tb-template-list"></div>
+            </div>
+
+            <div id="hoi4-panel">
+                <div id="hoi4-header">
+                    Division Designer
+                    <span id="view-mode-badge" class="view-mode-badge hidden">VIEW ONLY</span>
+                    <button id="hoi4-close">X</button>
+                </div>
+                <div id="hoi4-body">
+                    <div id="hoi4-left">
+                        <div class="hoi4-top-info">
+                            <div class="hoi4-unit-preview">🛡️</div>
+                            <div class="hoi4-unit-details">
+                                <input type="text" id="hoi4-template-name" class="hoi4-input" value="New Division Template">
+                                <button id="tb-template-new" class="hoi4-btn">New</button>
+                            </div>
+                        </div>
+                        <div class="hoi4-grid-area">
+                            <div class="hoi4-support-col"></div>
+                            <div class="hoi4-combat-grid"></div>
+                            <div id="hoi4-picker">
+                                <div class="picker-hdr">Select Battalion</div>
+                                <div class="picker-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="hoi4-right">
+                        <div class="stats-table-wrap">
+                            <table id="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">Base Stats</th>
+                                        <th colspan="2">Combat Stats</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="sn">Max Speed</td>    <td class="sv" id="stat-speed">0</td>
+                                        <td class="sn">Soft Attack</td>  <td class="sv" id="stat-soft">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">HP</td>           <td class="sv" id="stat-hp">0</td>
+                                        <td class="sn">Hard Attack</td>  <td class="sv" id="stat-hard">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Organisation</td> <td class="sv" id="stat-org">0</td>
+                                        <td class="sn">Air Attack</td>   <td class="sv" id="stat-air">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Recovery</td>     <td class="sv" id="stat-rec">0</td>
+                                        <td class="sn">Defense</td>      <td class="sv" id="stat-def">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Recon</td>        <td class="sv" id="stat-recon">0</td>
+                                        <td class="sn">Breakthrough</td> <td class="sv" id="stat-brk">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Suppression</td>  <td class="sv" id="stat-supp">0</td>
+                                        <td class="sn">Armor</td>        <td class="sv" id="stat-arm">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Weight</td>       <td class="sv" id="stat-wgt">0</td>
+                                        <td class="sn">Piercing</td>     <td class="sv" id="stat-ap">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Supply</td>       <td class="sv" id="stat-sply">0</td>
+                                        <td class="sn">Initiative</td>   <td class="sv" id="stat-ini">0.00%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Reliability</td>  <td class="sv" id="stat-rel">0%</td>
+                                        <td class="sn">Entrenchment</td> <td class="sv" id="stat-ent">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Trickleback</td>  <td class="sv" id="stat-tri">0%</td>
+                                        <td class="sn">Eq. Capture</td>  <td class="sv" id="stat-cap">0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="sn">Exp. Loss</td>    <td class="sv" id="stat-exploss">0%</td>
+                                        <td class="sn">Combat Width</td> <td class="sv" id="stat-width">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td class="sn">Hardness</td>     <td class="sv" id="stat-hrd">0%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div id="equip-panel">
+                                <div class="equip-panel-hdr">Equipment</div>
+                                <table id="equip-fixed-table">
+                                    <tbody>
+                                        <tr><td class="sn">Manpower</td>    <td class="sv" id="stat-man">0</td></tr>
+                                        <tr><td class="sn">Training T.</td> <td class="sv" id="stat-tt">0</td></tr>
+                                        <tr><td class="sn">Fuel Cap.</td>   <td class="sv" id="stat-fc">0</td></tr>
+                                        <tr><td class="sn">Fuel Usage</td>  <td class="sv" id="stat-fu">0</td></tr>
+                                    </tbody>
+                                </table>
+                                <div class="equip-needs-hdr">Equipment Needs</div>
+                                <div id="stat-equip-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="terrain-table-wrap">
+                            <table id="terrain-table">
+                                <thead>
+                                    <tr>
+                                        <th>Terrain</th>
+                                        <th>Movement</th>
+                                        <th>Attack</th>
+                                        <th>Defense</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stat-adjusters-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="hoi4-footer">
+                    <div style="flex: 1; display: flex; align-items: center;">
+                        <button id="tb-template-reset" class="hoi4-btn reset-btn">Reset</button>
+                        <div style="flex: 1; display: flex; justify-content: flex-end; gap: 20px;">
+                            <button id="tb-template-duplicate" class="hoi4-btn">Duplicate</button>
+                            <button id="tb-template-save" class="hoi4-btn">Save</button>
+                        </div>
+                    </div>
+                    <div style="width: 560px; display: flex; justify-content: flex-end; align-items: center; padding-left: 10px;">
+                        <span id="footer-cost-display">Production Cost: 0 IC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="session-overlay">
+        <div id="session-panel">
+            <div id="session-header">
+                <span>Manage Sessions</span>
+                <button id="session-close">X</button>
+            </div>
+            <div id="session-body">
+                <div id="session-list-view">
+                    <div id="session-list"></div>
+                </div>
+                <div id="session-share-view" class="hidden" style="flex-direction:column; justify-content:space-between; padding:18px 12px 14px;">
+                    <div style="font-size:11px; color:#888; text-transform:uppercase; letter-spacing:1px;">Share Link</div>
+                    <input id="session-share-url" type="text" class="hoi4-input" readonly style="width:100%; box-sizing:border-box;">
+                    <button id="session-share-copy" class="hoi4-btn">Copy to Clipboard</button>
+                </div>
+            </div>
+            <div id="session-footer"></div>
+        </div>
+    </div>
+
+    
+    <div id="auth-overlay">
+        <div id="auth-panel">
+            <div id="auth-header">
+                <span>Account</span>
+                <button id="auth-close">X</button>
+            </div>
+            <form id="auth-body">
+                <div class="auth-field">
+                    <label for="auth-username">Username</label>
+                    <input type="text" id="auth-username" placeholder="Enter username..." autocomplete="username">
+                </div>
+                <div class="auth-field">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" placeholder="Enter password..." autocomplete="current-password">
+                </div>
+                <div class="auth-field hidden" id="auth-confirm-wrap">
+                    <label for="auth-confirm">Confirm Password</label>
+                    <input type="password" id="auth-confirm" placeholder="Repeat password..." autocomplete="new-password">
+                </div>
+                <div id="auth-error" role="alert"></div>
+                <button type="submit" id="auth-submit">Login</button>
+                <div id="auth-switch">
+                    No account? <span data-tab="register">Register here</span>
+                </div>
+            </form>
+            
+            <div id="auth-user-section">
+                <div id="auth-welcome"></div>
+                <button id="auth-logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="acct-overlay">
+        <div id="acct-panel">
+            <div id="acct-header">
+                <span id="acct-title">Account</span>
+                <button id="acct-close">X</button>
+            </div>
+            
+            <form id="acct-form">
+                <div id="acct-body"></div>
+                <div id="acct-error" role="alert"></div>
+                <div id="acct-footer">
+                    <button type="submit" id="acct-submit" class="hoi4-btn">Confirm</button>
+                    <button type="button" id="acct-cancel" class="hoi4-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="admin-overlay">
+        <div id="admin-panel">
+            <div id="admin-header">
+                <span>Admin — Manage Users</span>
+                <button id="admin-close">X</button>
+            </div>
+
+            
+            <div id="admin-search-bar">
+                <label for="admin-search" class="sr-only">Search users</label>
+                <input type="search"
+                       id="admin-search"
+                       class="hoi4-input"
+                       placeholder="Search users…"
+                       autocomplete="off">
+            </div>
+
+            <div id="admin-body">
+
+                
+                <div id="admin-users-view">
+                    <table id="admin-users-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Sessions</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-tbody"></tbody>
+                    </table>
+                </div>
+
+                
+                <div id="admin-sessions-view" class="hidden">
+                    <div id="admin-sessions-topbar">
+                        <button id="admin-back-btn" class="hoi4-btn">← Back</button>
+                        <span id="admin-sessions-title"></span>
+                    </div>
+                    <div id="admin-sessions-list"></div>
+                </div>
+
+            </div>
+
+            <div id="admin-footer">
+                <span id="admin-status-msg"></span>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="clear-research-overlay">
+        <div id="clear-research-panel">
+            <div id="clear-research-header">Clear Research</div>
+            <div id="clear-research-body">
+                <p>What do you want to clear?</p>
+                <div id="clear-research-btns">
+                    <button class="hoi4-btn" id="cr-tab-btn">Current Tab</button>
+                    <button class="hoi4-btn" id="cr-all-btn">All Categories</button>
+                    <button class="hoi4-btn" id="cr-cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewport">
+        <div id="ui-weather-button">
+            <a href="weather.html">
+                <button id="weather-nav-btn">Weather</button>
+            </a>
+        </div>
+        <div id="tree-container">
+            <img id="base-image" src="media/base_art.png" alt="Base Tech Tree" draggable="false">
+        </div>
+    </div>
+
+    
+    <template id="tmpl-card">
+        <div class="tmpl-icon">🛡️</div>
+        <div class="tmpl-info">
+            <div class="tmpl-name"></div>
+            <div class="tmpl-actions">
+                <button class="tmpl-btn btn-view">View</button>
+                <button class="tmpl-btn btn-edit">Edit</button>
+                <button class="tmpl-delete" title="Delete">⊘</button>
+            </div>
+        </div>
+    </template>
+
+    <div id="tooltip"></div>
+
+    <script src="js/data_loader.js"></script>
+    <script src="js/tech_tree.js"></script>
+    <script src="js/template_builder.js"></script>
+    <script src="js/session_manager.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
