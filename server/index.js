@@ -27,6 +27,7 @@ app.get('/weather.html', (req, res) => {
                 React.createElement('link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }),
                 React.createElement('link', { href: 'https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&display=swap', rel: 'stylesheet' }),
                 React.createElement('link', { rel: 'stylesheet', href: 'css/weather.css' }),
+                React.createElement('link', {rel: "icon", href: "/media/favicon.ico"}),
                 React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react@18/umd/react.development.js' }),
                 React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react-dom@18/umd/react-dom.development.js' }),
                 React.createElement('script', { crossOrigin: 'anonymous', src: 'https://unpkg.com/react-router-dom@5/umd/react-router-dom.min.js' }),
